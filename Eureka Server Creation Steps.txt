@@ -1,0 +1,207 @@
+
+
+Create Eureka Server in STS (Spring Tool Suite)
+========================================================================================================================================================================
+Step 1: Create a New Spring Boot Project
+----------------------------------------------------------
+- Open STS (Spring Tool Suite).
+- Go to File → New → Spring Starter Project.
+- Set the following project details:
+  - Name: eureka-server
+  - Type: Maven
+  - Packaging: Jar
+  - Java Version: 8 or above
+  - Language: Java
+- Add the following Dependencies:
+  - Spring Web
+  - Eureka Server
+
+Step 2: Add Maven Dependencies (in pom.xml)
+-------------------------------------------------------------
+
+Add these inside `<dependencies>`:
+
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+</dependency>
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+
+Also add dependency management for spring cloud:
+
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-dependencies</artifactId>
+            <version>2021.0.4</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+
+Step 3: Modify Main Class
+--------------------------------------------------------------------------------------------------------
+
+In the main class (EurekaServerApplication.java), add @EnableEurekaServer:
+
+package com.example.eurekaserver;
+
+@SpringBootApplication
+@EnableEurekaServer
+public class EurekaServerApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(EurekaServerApplication.class, args);
+    }
+}
+
+Step 4: Configure application.properties
+--------------------------------------------------------------------------------------------------------
+Inside src/main/resources/application.properties, add:
+
+server.port=8761
+eureka.client.register-with-eureka=false
+eureka.client.fetch-registry=false
+spring.application.name=eureka-server
+
+Step 5: Run the Application
+--------------------------------------------------------------------------------------------------------
+- Right-click on EurekaServerApplication.java
+- Select Run As → Spring Boot App
+
+Step 6: Access Eureka Server Dashboard
+--------------------------------------------------------------------------------------------------------
+Open your browser and go to: http://localhost:8761/
+
+You will see the Eureka dashboard running.
+
+Extra Notes:
+- Make sure internet is connected for Maven downloads.
+- If you create client services later, add this property:
+
+eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+
+Summary:
+- Create Project
+- Add Dependencies
+- Annotate Main Class with @EnableEurekaServer
+- Set Properties
+- Run and Verify on Browser
+
+--------------------------------------------------------------
+Dependency:
+1. Spring Web
+2. Eureka Server
+
+1. Spring Web
+2. Eureka Discovery Client
+3. OpenFeign
+
+1. Spring Web
+2. Eureka Discovery Client
+3. OpenFeign
+
+Application.properties:
+
+# Eureka Server (8761)
+server.port=8761
+spring.application.name=your application name
+eureka.client.register-with-eureka=false
+eureka.client.fetch-registry=false
+
+# Payment Service (8081)
+server.port=8081
+spring.application.name=payment-service
+eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+
+# Withdraw Service (8082)
+server.port=8082
+spring.application.name=withdraw-service
+eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+
+Important Annotations:
+# Eureka Server
+@SpringBootApplication
+@EnableEurekaServer
+
+# Payment Service
+@SpringBootApplication
+@EnableDiscoveryClient
+@EnableFeignClients
+
+# Withdraw Service
+@SpringBootApplication
+@EnableDiscoveryClient
+@EnableFeignClients
+
+Code (Main Class):
+
+# Eureka Server
+@EnableEurekaServer
+@SpringBootApplication
+public class EurekaServerApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(EurekaServerApplication.class, args);
+    }
+}
+
+# Payment Service
+@EnableDiscoveryClient
+@EnableFeignClients
+@SpringBootApplication
+public class PaymentServiceApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(PaymentServiceApplication.class, args);
+    }
+}
+
+@RestController
+public class PaymentController {
+
+    @GetMapping("/payment")
+    public String payment() {
+        return "Payment processed successfully!";
+    }
+}
+
+# Withdraw Service
+@EnableDiscoveryClient
+@EnableFeignClients
+@SpringBootApplication
+public class WithdrawServiceApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(WithdrawServiceApplication.class, args);
+    }
+}
+
+@FeignClient(name = "payment-service")
+public interface PaymentClient {
+    @GetMapping("/payment")
+    String callPaymentService();
+}
+
+@RestController
+public class WithdrawController {
+
+    private final PaymentClient paymentClient;
+
+    public WithdrawController(PaymentClient paymentClient) {
+        this.paymentClient = paymentClient;
+    }
+
+    @GetMapping("/withdraw")
+    public String withdraw() {
+        String paymentResponse = paymentClient.callPaymentService();
+        return "Withdraw Done. Also, " + paymentResponse;
+    }
+}
+
+URLs:
+Eureka Server: http://localhost:8761
+Withdraw Service: http://localhost:8082/withdraw
+
