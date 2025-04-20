@@ -204,4 +204,102 @@ public class WithdrawController {
 URLs:
 Eureka Server: http://localhost:8761
 Withdraw Service: http://localhost:8082/withdraw
+====================================================================================================================
+Got it!  
+You shared a detailed table comparing:
+- **Springboot_Eureka_Server** (Server)
+- **Springboot_Eureka_Client_App01** (Payment Service)
+- **Springboot_Eureka_Client_App02** (Withdraw Service)
+
+And you asked:  
+👉 **"Generate a mind map based on this information."**
+
+Here’s a clean Mind Map structure based on your table:
+
+---
+
+### 🧠 **Spring Boot Eureka Architecture - Mind Map**
+
+#### 1. **Springboot_Eureka_Server**
+- **Dependencies:**
+  - Spring Web
+  - Eureka Server
+- **Application Properties:**
+  - server.port=8761
+  - spring.application.name = your application name
+  - eureka.client.register-with-eureka = false
+  - eureka.client.fetch-registry = false
+- **Important Annotations:**
+  - `@SpringBootApplication`
+  - `@EnableEurekaServer`
+- **Main Class:**
+  - Runs Eureka Server
+- **URL:**
+  - [http://localhost:8761](http://localhost:8761)
+
+---
+
+#### 2. **Springboot_Eureka_Client_App01 (Payment Service)**
+- **Dependencies:**
+  - Spring Web
+  - Eureka Discovery Client
+  - OpenFeign
+- **Application Properties:**
+  - server.port=8081
+  - spring.application.name = payment-service
+  - eureka.client.service-url.defaultZone = http://localhost:8761/eureka
+- **Important Annotations:**
+  - `@SpringBootApplication`
+  - `@EnableDiscoveryClient`
+  - `@EnableFeignClients`
+- **Main Class:**
+  - Runs Payment Service
+- **Controller:**
+  - `@RestController`
+  - Endpoint: `/payment`
+  - Response: "Payment processed successfully!"
+- **URL (Indirect - Not directly mentioned):**
+  - [http://localhost:8081/payment](http://localhost:8081/payment)
+
+---
+
+#### 3. **Springboot_Eureka_Client_App02 (Withdraw Service)**
+- **Dependencies:**
+  - Spring Web
+  - Eureka Discovery Client
+  - OpenFeign
+- **Application Properties:**
+  - server.port=8082
+  - spring.application.name = withdraw-service
+  - eureka.client.service-url.defaultZone = http://localhost:8761/eureka
+- **Important Annotations:**
+  - `@SpringBootApplication`
+  - `@EnableDiscoveryClient`
+  - `@EnableFeignClients`
+- **Main Class:**
+  - Runs Withdraw Service
+- **Feign Client:**
+  - Interface `PaymentClient` to call `payment-service`
+  - Maps `/payment`
+- **Controller:**
+  - `@RestController`
+  - Injects `PaymentClient`
+  - Endpoint: `/withdraw`
+  - Logic:
+    - Calls Payment Service
+    - Returns: `"Withdraw Done. Also, Payment processed successfully!"`
+- **URL:**
+  - [http://localhost:8082/withdraw](http://localhost:8082/withdraw)
+
+---
+
+Would you also like me to **generate a visual Mind Map image** 📄?  
+(Like a diagram/tree structure — I can create and send that too!) 🚀  
+
+**Tell me:**  
+✅ Yes, create visual mind map  
+or  
+❌ No, this text format is enough.  
+
+(Waiting for your response!) 🌟
 
